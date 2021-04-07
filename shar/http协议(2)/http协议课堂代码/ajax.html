@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="movies"></ul>
+
+    <button onclick="getMovies()">加载电影</button>
+    <script>
+      function asyncConnect(url) {
+        return new Promise((resolve) => {
+          xhr.onreadystatechange = function () {
+            //当请求状态发生改变时运行的函数
+            // xhr.readyState： 一个数字，用于判断请求到了哪个阶段
+            if (xhr.readyState === 4) {
+              var obj = JSON.parse(xhr.responseText); // 将json格式的字符串转换为js对象
+              resolve(obj);
+            }
+          };
+
+          xhr.open("get", url); //配置请求
+          xhr.send(null); //构建请求体，发送到服务器
+        });
+      }
+
+      var ul = document.getElementById("movies");
+      var xhr = new XMLHttpRequest(); //创建发送请求的对象
+      async function getMovies() {
+        var movies = await asyncConnect("http://yuanjin.tech:5100/api/movie");
+        for (var i = 0; i < movies.data.length; i++) {
+          var m = movies.data[i];
+          var li = document.createElement("li");
+          li.innerHTML = "<img src='" + m.poster + "' /> " + m.name;
+          ul.appendChild(li);
+        }
+      }
+    </script>
+  </body>
+</html>
